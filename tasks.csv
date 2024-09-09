@@ -1,1 +1,4 @@
-task,priority,deadline
+task, priority, status, deadline
+task1, 1, done, 2019-01-01
+task2, 2, in progress, 2019-01-02
+

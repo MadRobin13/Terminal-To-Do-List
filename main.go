@@ -6,30 +6,79 @@ import (
 	"os"
 )
 
-func main() {
-	AddTask("task1,1,tomorrow")
+type Task struct {
+	Task string
+	Priority int
+	Deadline string
 }
 
-func AddTask(task string) {
+func main() {
+	AddTask("Do the dishes", 1, "in progress", "2021-09-01")
+	// ReadTasks()
+}
+
+func ReadTasks(){
 	file, err := os.Open("./tasks.csv")
 	if err != nil {
 		fmt.Println("Error: %v", err)
 	}
 
-	w := csv.NewWriter(file)
+	r := csv.NewReader(file)
 
-	err = w.Write([]string{"\n" + task})
+	records, err := r.ReadAll()
 
 	if err != nil {
-		fmt.Println("Error could not write to file| Error: %v", err)
+		fmt.Println("Error: %v", err)
 	}
 
-	defer
-		w.Flush()
-
-		if err = w.Error(); err != nil {
-			fmt.Println("Error could flush filewriter| Error: %v", err)
-		}
-
-		file.Close()
+	for _, row := range records {
+		fmt.Println(row)
+	}
 }
+
+func AddTask(task string, priority int, status string, deadline string) {
+	file, err := os.OpenFile("./tasks.csv", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+
+	if err != nil {
+		fmt.Println("Error opening file: %v", err)
+	}
+
+	w := csv.NewWriter(file)
+	if err != nil {
+		fmt.Println("Error creating filewriter: %v", err)
+	}
+
+	err = w.Write([]string{"\n" + task, fmt.Sprintf("%d", priority), deadline})
+
+	if err != nil {
+		fmt.Println("Error writing to file: %v", err)
+	}
+
+	w.Flush()
+
+	file.Close()
+}
+
+// func AddTask(task string) {
+// 	file, err := os.Open("../tasks.csv")
+// 	if err != nil {
+// 		fmt.Println("Error: %v", err)
+// 	}
+
+// 	w := csv.NewWriter(file)
+
+// 	err = w.Write([]string{"\n" + task})
+
+// 	if err != nil {
+// 		fmt.Println("Error could not write to file| Error: %v", err)
+// 	}
+
+// 	defer
+// 		w.Flush()
+
+// 		if err = w.Error(); err != nil {
+// 			fmt.Println("Error could flush filewriter| Error: %v", err)
+// 		}
+
+// 		file.Close()
+// }
